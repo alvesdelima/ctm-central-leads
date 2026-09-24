@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Central de Leads</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <main class="main-content">
+      <!-- HEADER -->
+      <header class="topbar">
+        <div>
+          <h1>Central de Leads</h1>
+          <p>Gerencie e acompanhe seus leads</p>
+        </div>
+
+        <button class="refresh-button">↻ Atualizar</button>
+      </header>
+
+      <!-- CARDS -->
+      <section class="stats">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+
+          <div>
+            <span>Total de Leads</span>
+            <strong id="total-leads">0</strong>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">✓</div>
+
+          <div>
+            <span>Qualificados</span>
+            <strong id="qualified-leads">0</strong>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">◷</div>
+
+          <div>
+            <span>Agendados</span>
+            <strong id="scheduled-leads">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- FILTROS -->
+      <section class="filters">
+        <div class="search-box">
+          <span>⌕</span>
+
+          <input
+            type="text"
+            id="search"
+            placeholder="Buscar por nome ou telefone..."
+          />
+        </div>
+
+        <select id="qualification-filter">
+          <option value="all">Todos os leads</option>
+          <option value="qualified">Qualificados</option>
+          <option value="not-qualified">Não qualificados</option>
+        </select>
+
+        <select id="schedule-filter">
+          <option value="all">Todos</option>
+          <option value="scheduled">Agendados</option>
+          <option value="not-scheduled">Não agendados</option>
+        </select>
+      </section>
+
+      <!-- TABELA -->
+      <section class="table-container">
+        <div class="table-header">
+          <div>
+            <h2>Leads</h2>
+            <span id="lead-count">0 leads</span>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Qualificado?</th>
+                <th>Motivo</th>
+                <th>Agendou?</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody id="leads-table">
+              <!-- Leads serão carregados aqui -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- =========================================
+     MODAL DE DETALHES DO LEAD
+========================================= -->
+
+    <div class="modal-overlay" id="lead-modal">
+      <div class="lead-modal">
+        <div class="modal-header">
+          <div>
+            <span class="modal-label">DETALHES DO LEAD</span>
+            <h2 id="modal-lead-name">Dreise</h2>
+          </div>
+
+          <button class="modal-close" id="close-modal">×</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- TELEFONE -->
+
+          <div class="detail-group">
+            <label>Telefone</label>
+
+            <div class="phone-container">
+              <span id="modal-lead-phone"> 8876-7168 </span>
+
+              <a
+                href="#"
+                id="whatsapp-button"
+                class="whatsapp-button"
+                target="_blank"
+              >
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <!-- QUALIFICADO -->
+
+          <div class="detail-group">
+            <label>Qualificado?</label>
+
+            <div class="option-group">
+              <button
+                type="button"
+                class="option-button"
+                data-qualified="true"
+                id="qualified-yes"
+              >
+                ✓ Sim
+              </button>
+
+              <button
+                type="button"
+                class="option-button"
+                data-qualified="false"
+                id="qualified-no"
+              >
+                ✕ Não
+              </button>
+            </div>
+          </div>
+
+          <!-- MOTIVO -->
+
+          <div class="detail-group">
+            <label for="modal-reason"> Motivo </label>
+
+            <textarea
+              id="modal-reason"
+              placeholder="Digite o motivo..."
+              rows="4"
+            ></textarea>
+          </div>
+
+          <!-- AGENDOU -->
+
+          <div class="detail-group">
+            <label>Agendou?</label>
+
+            <div class="option-group">
+              <button
+                type="button"
+                class="option-button"
+                data-scheduled="true"
+                id="scheduled-yes"
+              >
+                ✓ Sim
+              </button>
+
+              <button
+                type="button"
+                class="option-button"
+                data-scheduled="false"
+                id="scheduled-no"
+              >
+                ✕ Não
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="cancel-button" id="cancel-modal">
+            Cancelar
+          </button>
+
+          <button type="button" class="save-button" id="save-lead">
+            Salvar alterações
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>

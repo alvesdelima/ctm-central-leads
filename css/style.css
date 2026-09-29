@@ -782,3 +782,8 @@ tbody tr:last-child td {
 .save-button:hover {
   background: #1d4ed8;
 }
+
+.status.pending {
+  background: rgba(234, 179, 8, 0.12);
+  color: #facc15;
+}

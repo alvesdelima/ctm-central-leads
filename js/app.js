@@ -183,6 +183,8 @@ async function loadLeads() {
         motivo: lead.motivo || "",
 
         agendou: lead.agendou === true,
+
+        atendido: lead.atendido === true,
       });
     });
 
@@ -268,18 +270,24 @@ function renderLeads(lista) {
 
     let qualificationStatus;
 
-    if (lead.qualificado === true) {
+    if (lead.atendido === false) {
       qualificationStatus = `
-                <span class="status success">
-                    ✓ Sim
-                </span>
-            `;
+        <span class="status pending">
+            ● Pendente
+        </span>
+    `;
+    } else if (lead.qualificado === true) {
+      qualificationStatus = `
+        <span class="status success">
+            ✓ Sim
+        </span>
+    `;
     } else {
       qualificationStatus = `
-                <span class="status danger">
-                    ✕ Não
-                </span>
-            `;
+        <span class="status danger">
+            ✕ Não
+        </span>
+    `;
     }
 
     // ----------------------------------------------

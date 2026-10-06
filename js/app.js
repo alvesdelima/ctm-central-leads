@@ -33,6 +33,8 @@ const leadsTable = document.getElementById("leads-table");
 const totalLeads = document.getElementById("total-leads");
 const qualifiedLeads = document.getElementById("qualified-leads");
 const scheduledLeads = document.getElementById("scheduled-leads");
+const enrolledLeads = document.getElementById("enrolled-leads");
+const conversionValue = document.getElementById("conversion-value");
 
 // Contador
 const leadCount = document.getElementById("lead-count");
@@ -78,6 +80,16 @@ const qualifiedNo = document.getElementById("qualified-no");
 const scheduledYes = document.getElementById("scheduled-yes");
 
 const scheduledNo = document.getElementById("scheduled-no");
+
+// Matrícula
+
+const enrolledYes = document.getElementById("enrolled-yes");
+
+const enrolledNo = document.getElementById("enrolled-no");
+
+// Valor da conversão
+
+const conversionValueInput = document.getElementById("conversion-value-input");
 
 // ======================================================
 // FORMATAR DATA
@@ -137,6 +149,19 @@ function formatPhone(phone) {
 }
 
 // ======================================================
+// FORMATAR VALOR
+// ======================================================
+
+function formatCurrency(value) {
+  const number = Number(value) || 0;
+
+  return number.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}
+
+// ======================================================
 // BUSCAR LEADS NO N8N
 // ======================================================
 
@@ -183,6 +208,10 @@ async function loadLeads() {
         motivo: lead.motivo || "",
 
         agendou: lead.agendou === true,
+
+        matricula: lead.matricula === true,
+
+        valor_conversao: Number(lead.valor_conversao) || 0,
 
         atendido: lead.atendido === true,
       });
@@ -338,21 +367,45 @@ function renderLeads(lista) {
                 ${lead.motivo ? escapeHTML(lead.motivo) : "-"}
             </td>
 
-            <td>
-                ${scheduleStatus}
-            </td>
+<td>
+    ${scheduleStatus}
+</td>
 
-            <td>
+<td>
+    ${
+      lead.matricula === true
+        ? `
+          <span class="status success">
+              ✓ Sim
+          </span>
+        `
+        : `
+          <span class="status danger">
+              ✕ Não
+          </span>
+        `
+    }
+</td>
 
-                <button
-                    type="button"
-                    class="action-button"
-                    data-lead-id="${lead.id}"
-                >
-                    Ver lead
-                </button>
+<td>
+    ${
+      lead.matricula === true && Number(lead.valor_conversao) > 0
+        ? formatCurrency(lead.valor_conversao)
+        : "R$ 0,00"
+    }
+</td>
 
-            </td>
+<td>
+
+    <button
+        type="button"
+        class="action-button"
+        data-lead-id="${lead.id}"
+    >
+        Ver lead
+    </button>
+
+</td>
 
         `;
 
@@ -376,11 +429,22 @@ function updateDashboard(lista) {
 
   const scheduled = leads.filter((lead) => lead.agendou === true).length;
 
+  const enrolled = leads.filter((lead) => lead.matricula === true).length;
+
+  const totalConversion = leads.reduce(
+    (sum, lead) => sum + (Number(lead.valor_conversao) || 0),
+    0,
+  );
+
   totalLeads.textContent = total;
 
   qualifiedLeads.textContent = qualified;
 
   scheduledLeads.textContent = scheduled;
+
+  enrolledLeads.textContent = enrolled;
+
+  conversionValue.textContent = formatCurrency(totalConversion);
 
   const visible = lista.length;
 
@@ -561,6 +625,28 @@ function openLeadModal(leadId) {
   }
 
   // ----------------------------------------------
+  // MATRICULA
+  // ----------------------------------------------
+
+  enrolledYes.classList.remove("selected");
+  enrolledNo.classList.remove("selected");
+
+  if (lead.matricula === true) {
+    enrolledYes.classList.add("selected");
+  } else {
+    enrolledNo.classList.add("selected");
+  }
+
+  // ----------------------------------------------
+  // VALOR DA CONVERSÃO
+  // ----------------------------------------------
+
+  conversionValueInput.value =
+    Number(lead.valor_conversao) > 0
+      ? Number(lead.valor_conversao).toFixed(2)
+      : "";
+
+  // ----------------------------------------------
   // ABRIR
   // ----------------------------------------------
 
@@ -634,6 +720,24 @@ scheduledNo.addEventListener("click", () => {
 });
 
 // ======================================================
+// MATRICULA
+// ======================================================
+
+enrolledYes.addEventListener("click", () => {
+  enrolledYes.classList.add("selected");
+
+  enrolledNo.classList.remove("selected");
+});
+
+enrolledNo.addEventListener("click", () => {
+  enrolledNo.classList.add("selected");
+
+  enrolledYes.classList.remove("selected");
+
+  conversionValueInput.value = "";
+});
+
+// ======================================================
 // SALVAR ALTERAÇÕES
 // ======================================================
 
@@ -663,6 +767,23 @@ saveLeadButton.addEventListener("click", async () => {
   }
 
   // ----------------------------------------------
+  // MATRICULA
+  // ----------------------------------------------
+
+  const enrolled = enrolledYes.classList.contains("selected");
+
+  // ----------------------------------------------
+  // VALOR DA CONVERSÃO
+  // ----------------------------------------------
+
+  const rawConversionValue = String(conversionValueInput.value || "").replace(
+    ",",
+    ".",
+  );
+
+  const conversionAmount = enrolled ? Number(rawConversionValue) || 0 : 0;
+
+  // ----------------------------------------------
   // PAYLOAD
   // ----------------------------------------------
 
@@ -674,6 +795,10 @@ saveLeadButton.addEventListener("click", async () => {
     motivo: modalReason.value.trim(),
 
     agendou: scheduled,
+
+    matricula: enrolled,
+
+    valor_conversao: conversionAmount,
   };
 
   console.log("Enviando atualização:", payload);

@@ -35,6 +35,7 @@ const qualifiedLeads = document.getElementById("qualified-leads");
 const scheduledLeads = document.getElementById("scheduled-leads");
 const enrolledLeads = document.getElementById("enrolled-leads");
 const conversionValue = document.getElementById("conversion-value");
+const conversionRate = document.getElementById("conversion-rate");
 
 // Contador
 const leadCount = document.getElementById("lead-count");
@@ -435,6 +436,10 @@ function updateDashboard(lista) {
     (sum, lead) => sum + (Number(lead.valor_conversao) || 0),
     0,
   );
+
+  const conversionRateValue = total > 0 ? (enrolled / total) * 100 : 0;
+
+  conversionRate.textContent = `${conversionRateValue.toFixed(2).replace(".", ",")}%`;
 
   totalLeads.textContent = total;
 
